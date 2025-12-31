@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    container_name: absensi-web
+    depends_on:
+      - db
+    volumes:
+      - ./src:/var/www/html:z
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+  db:
+    image: mysql:8.0
+    container_name: absensi-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass123
+      MYSQL_DATABASE: absensi_db
+      MYSQL_USER: absensi_user
+      MYSQL_PASSWORD: userpass123
+    volumes:
+      - dbdata:/var/lib/mysql:z
+    restart: unless-stopped
+  phpmyadmin:
+    image: docker.io/phpmyadmin/phpmyadmin:latest
+    container_name: absensi-pma
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: rootpass123
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+volumes:
+  dbdata:
